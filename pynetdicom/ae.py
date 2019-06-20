@@ -137,7 +137,8 @@ class ApplicationEntity(object):
 
         return [tt for tt in t_assocs if tt.ae == self]
 
-    def add_requested_context(self, abstract_syntax, transfer_syntax=None):
+    def add_requested_context(self, abstract_syntax, transfer_syntax=None,
+                              scu_role=None, scp_role=None):
         """Add a presentation context to be proposed when requesting an
         association.
 
@@ -247,6 +248,13 @@ class ApplicationEntity(object):
                 "are already the maximum allowed number of requested contexts"
             )
 
+        if not isinstance(scu_role, (type(None), bool)):
+            raise TypeError("`scu_role` must be None or bool")
+
+        if not isinstance(scp_role, (type(None), bool)):
+            raise TypeError("`scp_role` must be None or bool")
+
+
         abstract_syntax = UID(abstract_syntax)
 
         # Allow single transfer syntax values for convenience
@@ -256,7 +264,8 @@ class ApplicationEntity(object):
         context = PresentationContext()
         context.abstract_syntax = abstract_syntax
         context.transfer_syntax = [UID(syntax) for syntax in transfer_syntax]
-
+        context.scu_role = None or scu_role
+        context.scp_role = None or scp_role
         self._requested_contexts.append(context)
 
     def add_supported_context(self, abstract_syntax, transfer_syntax=None,
